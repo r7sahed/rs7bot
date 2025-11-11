@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RS7 BOT - Free Fire Emote</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* বেসিক CSS স্টাইল */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #2c3e50; /* গাঢ় ব্যাকগ্রাউন্ড */
+            color: #ecf0f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #34495e; /* কন্টেনারের রঙ */
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        /* হেডলাইন স্টাইল */
+        .header-title-1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8em;
+            color: #f1c40f; /* হলুদ রঙ */
+            margin-bottom: 5px;
+        }
+
+        .header-title-2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.5em;
+            color: #e74c3c; /* লাল রঙ */
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* বাটন এবং ইনপুট স্টাইল */
+        button {
+            background-color: #2ecc71; /* সবুজ বাটন */
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #27ae60;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #7f8c8d;
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #ecf0f1;
+            color: #34495e;
+        }
+
+        /* বিভিন্ন পেজের জন্য ডিসপ্লে ক্লাস */
+        .page {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="home-page" class="page" style="display: block;">
+            <div class="header-title-1">R7 SAHED 2.0</div>
+            <div class="header-title-2">RS7 BOT</div>
+            <p id="app-status-message" style="color: #e74c3c; display: none;">দুঃখিত! অ্যাডমিন কর্তৃক অ্যাপটি বর্তমানে বন্ধ আছে।</p>
+            <button onclick="showLogin()">Login</button>
+            <button onclick="showRegister()">Register</button>
+        </div>
+
+        <div id="login-form" class="page">
+            <h3>লগইন করুন</h3>
+            <input type="email" id="login-email" placeholder="ইমেল" required>
+            <input type="password" id="login-password" placeholder="পাসওয়ার্ড" required>
+            <button onclick="loginUser()">Login</button>
+            <button onclick="showHome()">ফিরে যান</button>
+            <p id="login-error" style="color: #e74c3c;"></p>
+        </div>
+
+        <div id="register-form" class="page">
+            <h3>রেজিস্টার করুন</h3>
+            <input type="email" id="register-email" placeholder="ইমেল" required>
+            <input type="password" id="register-password" placeholder="পাসওয়ার্ড" required>
+            <button onclick="registerUser()">Register</button>
+            <button onclick="showHome()">ফিরে যান</button>
+            <p id="register-error" style="color: #e74c3c;"></p>
+        </div>
+
+        <div id="dashboard-page" class="page">
+            <div class="header-title-1">R7 SAHED 2.0</div>
+            <div class="header-title-2">RS7 BOT</div>
+            
+            <h4>সোশ্যাল মিডিয়া লিঙ্ক</h4>
+            <div style="margin-bottom: 20px;">
+                <button onclick="window.open(document.getElementById('tiktok-link').href, '_blank')">TikTok</button>
+                <button onclick="window.open(document.getElementById('telegram-link').href, '_blank')">Telegram</button>
+                <button onclick="window.open(document.getElementById('discord-link').href, '_blank')">Discord</button>
+            </div>
+
+            <h4>গোপন কোড দিয়ে প্রবেশ করুন</h4>
+            <input type="password" id="password-one" placeholder="প্রথম পাসওয়ার্ড" required>
+            <input type="password" id="password-two" placeholder="দ্বিতীয় পাসওয়ার্ড" required>
+            <button onclick="accessEmoteLink()">অ্যাক্সেস করুন</button>
+            <p id="access-error" style="color: #e74c3c;"></p>
+
+            <button onclick="logoutUser()" style="background-color: #95a5a6; margin-top: 15px;">Logout</button>
+        </div>
+    </div>
+
+    <a id="tiktok-link" href="https://www.tiktok.com/@r7sahed2.0" style="display: none;"></a>
+    <a id="telegram-link" href="https://t.me/r7sahedbot" style="display: none;"></a>
+    <a id="discord-link" href="https://discord.gg/dmFCj66H65" style="display: none;"></a>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    
+    <script>
+        // আপনার দেওয়া Firebase কনফিগারেশন
+        const firebaseConfig = {
+          apiKey: "AIzaSyCT-Qxh0aOqUtIK0gRVDiIAJpQyZEODH1w",
+          authDomain: "bot-admin-cb40b.firebaseapp.com",
+          databaseURL: "https://bot-admin-cb40b-default-rtdb.firebaseio.com",
+          projectId: "bot-admin-cb40b",
+          storageBucket: "bot-admin-cb40b.firebasestorage.app",
+          messagingSenderId: "831475375013",
+          appId: "1:831475375013:web:3cb5c3d291e4b7bdaaa64c"
+        };
+
+        // Firebase ইনিশিয়ালাইজ করুন
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const initialPassOne = "1180"; // প্রথম পাসওয়ার্ড
+        const initialPassTwo = "8090"; // দ্বিতীয় পাসওয়ার্ড
+
+        // সকল পেজগুলি লুকিয়ে নির্দিষ্ট পেজ দেখানো
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'block';
+        }
+
+        function showHome() { showPage('home-page'); }
+        function showLogin() { showPage('login-form'); }
+        function showRegister() { showPage('register-form'); }
+        function showDashboard() { showPage('dashboard-page'); }
+        
+        // --- Firebase ফাংশনালিটি ---
+        
+        // অ্যাপ্লিকেশন স্ট্যাটাস এবং লিঙ্ক লোড করা
+        database.ref('settings').on('value', (snapshot) => {
+            const settings = snapshot.val();
+            if (settings && settings.appStatus === 'off') {
+                document.getElementById('home-page').style.display = 'block'; // হোম পেজ দেখাতে হবে
+                document.getElementById('app-status-message').style.display = 'block';
+                document.querySelector('#home-page button:nth-child(3)').style.display = 'none'; // Login বাটন
+                document.querySelector('#home-page button:nth-child(4)').style.display = 'none'; // Register বাটন
+                // যদি ইউজার লগইন করা থাকে, তাকে লগআউট করে হোম পেজে পাঠানো উচিত
+                auth.signOut().then(() => {
+                    if (document.getElementById('dashboard-page').style.display === 'block') {
+                        showHome();
+                    }
+                }).catch(error => console.error(error));
+            } else {
+                 document.getElementById('app-status-message').style.display = 'none';
+                 document.querySelector('#home-page button:nth-child(3)').style.display = 'inline-block';
+                 document.querySelector('#home-page button:nth-child(4)').style.display = 'inline-block';
+            }
+
+            // সোশ্যাল মিডিয়া লিঙ্ক আপডেট করা
+            if (settings && settings.links) {
+                document.getElementById('tiktok-link').href = settings.links.tiktok;
+                document.getElementById('telegram-link').href = settings.links.telegram;
+                document.getElementById('discord-link').href = settings.links.discord;
+            }
+        });
+        
+        // ইউজার রেজিস্ট্রেশন
+        function registerUser() {
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const errorElement = document.getElementById('register-error');
+            errorElement.textContent = '';
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // সফল রেজিস্ট্রেশন
+                    errorElement.textContent = 'রেজিস্ট্রেশন সফল! লগইন করুন।';
+                    errorElement.style.color = '#2ecc71';
+                    showLogin();
+                    // Firebase Realtime Database-এ ইউজার যোগ করা
+                    database.ref('users/' + userCredential.user.uid).set({
+                        email: email,
+                        isBlocked: false,
+                        registrationDate: new Date().toISOString()
+                    });
+                })
+                .catch((error) => {
+                    // এরর হ্যান্ডলিং
+                    errorElement.textContent = 'রেজিস্ট্রেশন ব্যর্থ: ' + error.message;
+                    errorElement.style.color = '#e74c3c';
+                });
+        }
+
+        // ইউজার লগইন
+        function loginUser() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const errorElement = document.getElementById('login-error');
+            errorElement.textContent = '';
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // সফল লগইন - অনAuthStateChanged হ্যান্ডলার বাকিটা দেখবে
+                })
+                .catch((error) => {
+                    errorElement.textContent = 'লগইন ব্যর্থ: ' + error.message;
+                    errorElement.style.color = '#e74c3c';
+                });
+        }
+        
+        // ইউজার লগআউট
+        function logoutUser() {
+            auth.signOut().then(() => {
+                showHome();
+            }).catch((error) => {
+                console.error("Logout Error:", error);
+            });
+        }
+        
+        // Auth স্ট্যাটাস পরিবর্তন পর্যবেক্ষণ করা
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // ইউজার লগইন করা আছে, ব্লক স্ট্যাটাস চেক করুন
+                database.ref('users/' + user.uid).once('value', (snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData && userData.isBlocked) {
+                        // ইউজার ব্লক করা আছে
+                        auth.signOut(); // তাকে লগআউট করে দিন
+                        alert("দুঃখিত! আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে।");
+                        showHome();
+                    } else {
+                        // ইউজার ব্লক করা নেই, ড্যাশবোর্ড দেখান
+                        showDashboard();
+                    }
+                });
+            } else {
+                // ইউজার লগইন করা নেই, হোম পেজ দেখান
+                if (document.getElementById('dashboard-page').style.display !== 'none') {
+                     showHome();
+                }
+            }
+        });
+        
+        // গোপন লিঙ্ক অ্যাক্সেস
+        function accessEmoteLink() {
+            const passOne = document.getElementById('password-one').value;
+            const passTwo = document.getElementById('password-two').value;
+            const errorElement = document.getElementById('access-error');
+            errorElement.textContent = '';
+            
+            // Firebase থেকে গোপন লিঙ্ক এবং পাসওয়ার্ড লোড করুন
+            database.ref('settings').once('value', (snapshot) => {
+                const settings = snapshot.val();
+                let emoteLink = settings && settings.emoteLink ? settings.emoteLink : "https://www.b25cheats.fun/";
+                let adminPassOne = settings && settings.passwords ? settings.passwords.passOne : initialPassOne;
+                let adminPassTwo = settings && settings.passwords ? settings.passwords.passTwo : initialPassTwo;
+
+                // পাসওয়ার্ড চেক
+                if (passOne === adminPassOne && passTwo === adminPassTwo) {
+                    // সফল: অটোমেটিক লিঙ্ক ওপেন হবে
+                    window.open(emoteLink, '_blank', 'noopener,noreferrer');
+                    errorElement.textContent = 'সফল! আপনার লিঙ্কটি নতুন ট্যাবে খুলছে...';
+                    errorElement.style.color = '#2ecc71';
+                } else {
+                    // ব্যর্থ
+                    errorElement.textContent = 'ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।';
+                    errorElement.style.color = '#e74c3c';
+                }
+            });
+        }
+        
+    </script>
+</body>
+</html>

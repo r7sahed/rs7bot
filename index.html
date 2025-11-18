@@ -2,141 +2,693 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#1a1a1a">
     <title>RS7 BOT - Free Fire Emote</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* বেসিক CSS স্টাইল */
+        /* Dark Theme Variables */
+        :root {
+            --card-bg: rgba(34, 34, 34, 0.95);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: #444;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --success-color: #2ecc71; 
+            --error-color: #e74c3c; 
+            --accent-color: #8b5cf6; 
+            --tiktok-primary: #000000;
+            --telegram-blue: #0088cc;
+        }
+
+        /* ************* বেসিক এবং কমন স্টাইল ************* */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #2c3e50; /* গাঢ় ব্যাকগ্রাউন্ড */
-            color: #ecf0f1;
+            background: #000000;
+            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            font-family: 'Roboto', sans-serif;
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+            color: var(--text-primary);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(79, 70, 229, 0.1) 0%, transparent 50%);
+            animation: gradientMove 20s ease infinite;
+            z-index: 0;
+        }
+        
+        /* কন্টেইনার স্টাইল */
+        .dashboard-container, .auth-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px) saturate(150%);
+            -webkit-backdrop-filter: blur(10px) saturate(150%);
+            /* clamp(Min, Preferred, Max) ফাংশনটি রেসপনসিভনেস নিশ্চিত করছে */
+            padding: clamp(32px, 8vw, 56px) clamp(24px, 6vw, 48px);
+            border-radius: clamp(20px, 4vw, 28px);
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            max-width: 520px; /* ডিফল্ট সর্বোচ্চ প্রস্থ */
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* গ্রেডিয়েন্ট বর্ডার পুনরুদ্ধার */
+        .dashboard-container::before, .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8b5cf6, #4f46e5, #ec4899, #8b5cf6);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            border-radius: 28px 28px 0 0;
+        }
+        
+        /* ************* হেডার স্টাইল ************* */
+        .login-header {
+            text-align: center;
+            margin-bottom: clamp(24px, 6vw, 32px);
+        }
+        
+        .logo-wrapper {
+            margin-bottom: 16px;
+        }
+        
+        .logo-wrapper i {
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .login-header h1 {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            margin: 0 0 8px 0;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899, #f43f5e, #8b5cf6);
+            background-size: 300% 300%;
+            animation: colorShift 5s ease infinite, titlePulse 2s ease-in-out infinite; 
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            display: inline-block; 
+            will-change: transform;
+        }
+        
+        .login-header p {
+            color: var(--accent-color); 
             margin: 0;
+            font-size: clamp(1.0rem, 3vw, 1.2rem);
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        /* ড্যাশবোর্ড শিরোনামের জন্য নির্দিষ্ট স্টাইল */
+        #dashboard-page .login-header h1 #dashboard-title-animated {
+            background: linear-gradient(90deg, #2ecc71, #3498db, #f1c40f, #2ecc71, #3498db);
+            background-size: 600% 100%;
+            animation: colorShift 5s linear infinite;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            user-select: none;
+            display: inline-block;
+        }
+
+        /* ************* সোশ্যাল লিঙ্ক স্টাইল ************* */
+        
+        .social-links-container-auth {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0 clamp(24px, 6vw, 36px); 
+        }
+        
+        .social-links-container-dashboard {
+            /* ডিফল্ট: পিসি এবং মোবাইল */
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0 24px; 
+        }
+
+        .get-password-link {
+            padding: clamp(14px, 3vw, 18px) 18px; 
+            border-radius: 14px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+            touch-action: manipulation;
+            width: 100%; 
+        }
+
+        .get-password-link.tiktok { 
+            background: linear-gradient(135deg, var(--tiktok-primary), #222222);
+        }
+        .get-password-link.telegram {
+            background: linear-gradient(135deg, var(--telegram-blue), #006699);
+        }
+        .get-password-link.discord {
+            background: linear-gradient(135deg, #7289da, #5865f2);
+        }
+        
+        .get-password-link:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* ************* ফর্ম স্টাইল (কোনো পরিবর্তন নেই) ************* */
+        
+        .form-switcher {
+            display: flex;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            background: #2a2a2a;
+            padding: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .switch-button {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .switch-button.active {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .auth-form .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; 
+        }
+        .auth-form .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem; 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.2px;
+        }
+        .auth-form .form-group label i {
+            color: var(--accent-color);
+            font-size: 1.1em;
+            width: 20px;
             text-align: center;
         }
-
-        .container {
-            background-color: #34495e; /* কন্টেনারের রঙ */
-            padding: 30px 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            max-width: 400px;
-            width: 90%;
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
-
-        /* হেডলাইন স্টাইল */
-        .header-title-1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 1.8em;
-            color: #f1c40f; /* হলুদ রঙ */
-            margin-bottom: 5px;
+        
+        .input-wrapper i.input-icon {
+            position: absolute;
+            left: 18px;
+            color: #999;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
         }
-
-        .header-title-2 {
-            font-family: 'Poppins', sans-serif;
-            font-size: 2.5em;
-            color: #e74c3c; /* লাল রঙ */
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
-        /* বাটন এবং ইনপুট স্টাইল */
-        button {
-            background-color: #2ecc71; /* সবুজ বাটন */
-            color: white;
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #27ae60;
-        }
-
-        input {
+        
+        .form-group input {
+            padding: clamp(14px, 3vw, 18px) 18px clamp(14px, 3vw, 18px) 50px;
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            background: #2a2a2a; 
+            color: var(--text-primary);
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #7f8c8d;
-            border-radius: 5px;
-            box-sizing: border-box;
-            background-color: #ecf0f1;
-            color: #34495e;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--accent-color);
+            background: #333;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+        }
+        
+        .form-group input:focus ~ .input-icon {
+            color: var(--accent-color);
         }
 
-        /* বিভিন্ন পেজের জন্য ডিসপ্লে ক্লাস */
+        .action-button, .login-button {
+            padding: clamp(16px, 3.5vw, 20px) 30px;
+            background: linear-gradient(135deg, var(--success-color), #229954);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 8px;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+            width: 100%;
+            touch-action: manipulation;
+            min-height: 52px;
+        }
+        
+        .action-button:hover, .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
+        }
+        
+        .logout-button {
+             background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+             margin-top: 20px;
+             margin-bottom: 20px;
+        }
+        
+        /* ************* ড্যাশবোর্ড স্পেসিফিক স্টাইল (কোনো পরিবর্তন নেই) ************* */
+        .login-form { 
+            display: flex;
+            flex-direction: column;
+            gap: clamp(20px, 4vw, 28px);
+        }
+        
+        .password-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+            width: 100%;
+            justify-content: center; 
+        }
+
+        .get-password-link.tiktok.small-btn {
+            background: linear-gradient(135deg, #000000, #222222);
+            width: 100%;
+            margin: 0;
+            border: 1px solid #444;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            padding: clamp(10px, 2.5vw, 12px) 20px;
+            font-size: clamp(0.85rem, 2vw, 0.9rem); 
+        }
+        
+        /* Error/Message styles */
+        .message-box {
+            background: linear-gradient(135deg, #442222, #3a1a1a);
+            color: var(--error-color);
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid #663333;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .message-box.show {
+            animation: fadeIn 0.4s ease-in-out; 
+            display: block;
+        }
+
+        /* Animations (কোনো পরিবর্তন নেই) */
+        @keyframes colorShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { 
+                transform: scale(1) translateY(0); 
+            }
+            50% { 
+                transform: scale(1.01) translateY(-1px);
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* ************* রেসপনসিভ অ্যাডজাস্টমেন্ট ************* */
         .page {
             display: none;
+            width: 100%;
+        }
+        
+        /* মোবাইল অ্যাডজাস্টমেন্ট (আপনার পুরোনো কোড) */
+        @media (max-width: 480px) {
+            .dashboard-container, .auth-container {
+                 padding: 32px 24px;
+            }
+            .social-links-container-dashboard {
+                /* মোবাইলে 3 কলামের বদলে 1 কলামে দেখাবে */
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ✅ নতুন পরিবর্তন: ট্যাবলেট এবং ছোট ল্যাপটপের জন্য */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            .dashboard-container, .auth-container {
+                max-width: 600px; 
+                padding: 40px 50px; 
+                border-radius: 32px; 
+            }
+            .dashboard-container::before, .auth-container::before {
+                height: 5px; 
+                border-radius: 32px 32px 0 0;
+            }
+            .social-links-container-dashboard {
+                /* ট্যাবলেটে 3 কলামের বদলে 2 কলামে দেখাবে */
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+        
+        /* ✅ নতুন পরিবর্তন: পিসি এবং বড় স্ক্রিনের জন্য */
+        @media (min-width: 1025px) {
+            .dashboard-container, .auth-container {
+                /* নির্দিষ্ট আকারে ফোকাসড থাকবে */
+                max-width: 500px; 
+                padding: 40px 48px;
+                border-radius: 32px;
+            }
+            body {
+                /* বড় স্ক্রিনে কন্টেইনারের চারপাশে একটু বেশি প্যাডিং */
+                padding: 40px; 
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="home-page" class="page" style="display: block;">
-            <div class="header-title-1">R7 SAHED 2.0</div>
-            <div class="header-title-2">RS7 BOT</div>
-            <p id="app-status-message" style="color: #e74c3c; display: none;">দুঃখিত! অ্যাডমিন কর্তৃক অ্যাপটি বর্তমানে বন্ধ আছে।</p>
-            <button onclick="showLogin()">Login</button>
-            <button onclick="showRegister()">Register</button>
-        </div>
-
-        <div id="login-form" class="page">
-            <h3>লগইন করুন</h3>
-            <input type="email" id="login-email" placeholder="ইমেল" required>
-            <input type="password" id="login-password" placeholder="পাসওয়ার্ড" required>
-            <button onclick="loginUser()">Login</button>
-            <button onclick="showHome()">ফিরে যান</button>
-            <p id="login-error" style="color: #e74c3c;"></p>
-        </div>
-
-        <div id="register-form" class="page">
-            <h3>রেজিস্টার করুন</h3>
-            <input type="email" id="register-email" placeholder="ইমেল" required>
-            <input type="password" id="register-password" placeholder="পাসওয়ার্ড" required>
-            <button onclick="registerUser()">Register</button>
-            <button onclick="showHome()">ফিরে যান</button>
-            <p id="register-error" style="color: #e74c3c;"></p>
-        </div>
-
-        <div id="dashboard-page" class="page">
-            <div class="header-title-1">R7 SAHED 2.0</div>
-            <div class="header-title-2">RS7 BOT</div>
+    
+    <div id="auth-page" class="page">
+        <div class="auth-container">
             
-            <h4>সোশ্যাল মিডিয়া লিঙ্ক</h4>
-            <div style="margin-bottom: 20px;">
-                <button onclick="window.open(document.getElementById('tiktok-link').href, '_blank')">TikTok</button>
-                <button onclick="window.open(document.getElementById('telegram-link').href, '_blank')">Telegram</button>
-                <button onclick="window.open(document.getElementById('discord-link').href, '_blank')">Discord</button>
+            <div class="login-header">
+                <div class="logo-wrapper">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1>RS7 BOT</h1>
+                <p id="sub-heading">R7 SAHED 2.0</p>
+                <p id="app-status-message" style="color: var(--error-color); font-weight: 700; display: none; margin-top: 15px;">দুঃখিত! অ্যাডমিন কর্তৃক অ্যাপটি বর্তমানে বন্ধ আছে।</p>
+            </div>
+            
+            <div class="social-links-container-auth">
+                <a id="youtube-link" href="#" target="_blank" class="get-password-link tiktok" rel="noopener noreferrer"> <i class="fab fa-tiktok"></i> TikTok
+                </a>
+                <a id="telegram-link" href="#" target="_blank" class="get-password-link telegram" rel="noopener noreferrer">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+                <a id="discord-link" href="#" target="_blank" class="get-password-link discord" rel="noopener noreferrer">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+            </div>
+            
+            <div class="form-switcher">
+                <button class="switch-button active" id="login-tab" data-target="login-form">Login</button>
+                <button class="switch-button" id="register-tab" data-target="register-form">Register</button>
             </div>
 
-            <h4>গোপন কোড দিয়ে প্রবেশ করুন</h4>
-            <input type="password" id="password-one" placeholder="প্রথম পাসওয়ার্ড" required>
-            <input type="password" id="password-two" placeholder="দ্বিতীয় পাসওয়ার্ড" required>
-            <button onclick="accessEmoteLink()">অ্যাক্সেস করুন</button>
-            <p id="access-error" style="color: #e74c3c;"></p>
+            <div id="message-box" class="message-box"></div>
+            
+            <form class="auth-form" id="login-form-content">
+                <div class="form-section" style="display: flex; flex-direction: column; gap: 28px;">
+                    <div class="form-group">
+                        <label for="login-email">
+                            <i class="fas fa-envelope"></i> ইমেইল
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="email" id="login-email" name="email" placeholder="Enter Your Email" required autocomplete="email">
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">
+                            <i class="fas fa-lock"></i> পাসওয়ার্ড
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="password" id="login-password" name="password" placeholder="Enter Password" required autocomplete="current-password">
+                            <i class="fas fa-key input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="action-button" id="login-button-auth">
+                        <i class="fas fa-sign-in-alt"></i> লগইন
+                    </button>
+                </div>
+            </form>
 
-            <button onclick="logoutUser()" style="background-color: #95a5a6; margin-top: 15px;">Logout</button>
+            <form class="auth-form" id="register-form-content" style="display:none;">
+                <div class="form-section" style="display: flex; flex-direction: column; gap: 28px;">
+                    <div class="form-group">
+                        <label for="register-email">
+                            <i class="fas fa-envelope"></i> ইমেইল
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="email" id="register-email" name="email" placeholder="Enter Valid Email" required autocomplete="email">
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password">
+                            <i class="fas fa-key"></i> পাসওয়ার্ড দিন
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="password" id="register-password" name="password" placeholder="Enter New Password" required autocomplete="new-password">
+                            <i class="fas fa-lock input-icon"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="action-button" id="register-button">
+                        <i class="fas fa-user-plus"></i> রেজিস্টার করুন
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+    
+
+    <div id="dashboard-page" class="page">
+        <div class="dashboard-container">
+            
+            <div class="login-header">
+                <div class="logo-wrapper">
+                    <i class="fas fa-shield-alt" style="background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                
+                <h1 style="font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; display: inline-block; font-size: clamp(1.75rem, 5vw, 2.5rem); margin: 0 0 8px 0;">
+                    <span id="dashboard-title-animated">RS7 BOT</span>
+                </h1>
+                
+                <p style="color: var(--accent-color); font-weight: 600;">R7 SAHED 2.0</p>
+            </div>
+            
+            <div class="social-links-container-dashboard">
+                <a onclick="window.open(document.getElementById('tiktok-link-dashboard').href, '_blank')" class="get-password-link discord">
+                    <i class="fab fa-tiktok"></i> TikTok
+                </a>
+                <a onclick="window.open(document.getElementById('telegram-link-dashboard').href, '_blank')" class="get-password-link telegram">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+                 <a onclick="window.open(document.getElementById('discord-link-dashboard').href, '_blank')" class="get-password-link discord">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+            </div>
+            
+            <button onclick="logoutUser()" class="login-button logout-button">
+                 <i class="fas fa-sign-out-alt"></i> লগআউট
+            </button>
+            
+            <h4 style="color: var(--success-color); margin: 30px 0 20px; text-align: center;">গোপন কোড দিয়ে লিঙ্ক অ্যাক্সেস করুন</h4>
+
+            <div id="access-message-box" class="message-box"></div>
+            
+            <form class="login-form" id="access-form">
+                <div class="form-group">
+                    <label for="password-one">
+                        <i class="fas fa-lock"></i> প্রথম পাসওয়ার্ড 
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password-one" name="password_one" placeholder="Enter password 1" required autocomplete="off" inputmode="text">
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password-two">
+                        <i class="fas fa-star"></i> দ্বিতীয় পাসওয়ার্ড
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password-two" name="password_two" placeholder="Enter password 2" required autocomplete="off" inputmode="text">
+                        <i class="fas fa-key input-icon"></i>
+                    </div>
+                    <div class="password-links" style="justify-content: center;">
+                        <a onclick="window.open(document.getElementById('telegram-link-dashboard').href, '_blank')" class="get-password-link tiktok small-btn" rel="noopener noreferrer">
+                            <i class="fas fa-check-circle"></i> Get Password
+                        </a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="login-button" id="access-button">
+                    <i class="fas fa-sign-in-alt"></i> অ্যাক্সেস করুন
+                </button>
+            </form>
+            
         </div>
     </div>
 
-    <a id="tiktok-link" href="https://www.tiktok.com/@r7sahed2.0" style="display: none;"></a>
-    <a id="telegram-link" href="https://t.me/r7sahedbot" style="display: none;"></a>
-    <a id="discord-link" href="https://discord.gg/dmFCj66H65" style="display: none;"></a>
+    <a id="tiktok-link-dashboard" href="#" style="display: none;"></a>
+    <a id="telegram-link-dashboard" href="#" style="display: none;"></a>
+    <a id="discord-link-dashboard" href="#" style="display: none;"></a>
     
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     
     <script>
-        // আপনার দেওয়া Firebase কনফিগারেশন
+        // --- ইউটিলিটি ফাংশন (কোনো পরিবর্তন নেই) ---
+        (function() {
+            'use strict';
+            
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const loginFormContent = document.getElementById('login-form-content');
+            const registerFormContent = document.getElementById('register-form-content');
+            const subHeading = document.getElementById('sub-heading');
+            const messageBoxAuth = document.getElementById('message-box');
+            
+            const messageBoxAccess = document.getElementById('access-message-box'); 
+            const accessButton = document.getElementById('access-button');
+
+            function showForm(formId) {
+                if (formId === 'login-form') {
+                    loginFormContent.style.display = 'flex';
+                    registerFormContent.style.display = 'none';
+                    loginTab.classList.add('active');
+                    registerTab.classList.remove('active');
+                    subHeading.textContent = 'R7 SAHED 2.0';
+                    registerFormContent.reset(); 
+                } else {
+                    loginFormContent.style.display = 'none';
+                    registerFormContent.style.display = 'flex';
+                    loginTab.classList.remove('active');
+                    registerTab.classList.add('active');
+                    subHeading.textContent = 'নতুন অ্যাকাউন্ট তৈরি করুন';
+                    loginFormContent.reset(); 
+                }
+                messageBoxAuth.style.display = 'none';
+            }
+
+            // Toggler functionality
+            loginTab.addEventListener('click', () => showForm('login-form'));
+            registerTab.addEventListener('click', () => showForm('register-form'));
+
+            // Initial view
+            showForm('login-form');
+
+            window.showMessage = function(message, type = 'error', targetBox = messageBoxAuth) {
+                targetBox.textContent = message;
+                targetBox.style.background = type === 'success' 
+                    ? 'linear-gradient(135deg, var(--success-color), #229954)' 
+                    : 'linear-gradient(135deg, #442222, #3a1a1a)';
+                targetBox.style.color = type === 'success' ? 'white' : 'var(--error-color)';
+                targetBox.style.border = type === 'success' ? '2px solid var(--success-color)' : '2px solid #663333';
+                targetBox.style.display = 'block';
+                targetBox.classList.add('show');
+                
+                // 5 সেকেন্ড পরে মেসেজ হাইড
+                setTimeout(() => {
+                    targetBox.style.display = 'none';
+                    targetBox.classList.remove('show');
+                }, 5000);
+            }
+            
+            window.showAuthPage = function() { showPage('auth-page'); showForm('login-form'); }
+            window.showDashboardPage = function() { showPage('dashboard-page'); }
+            
+            window.setLoadingAccess = function(isLoading) {
+                if (isLoading) {
+                    accessButton.disabled = true;
+                    accessButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> চেকিং...';
+                } else {
+                    accessButton.disabled = false;
+                    accessButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> অ্যাক্সেস করুন';
+                }
+            }
+            
+            document.getElementById('access-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                accessEmoteLink();
+            });
+
+        })();
+        
+        // --- Firebase কনফিগারেশন এবং লজিক (কোনো পরিবর্তন নেই) ---
         const firebaseConfig = {
           apiKey: "AIzaSyCT-Qxh0aOqUtIK0gRVDiIAJpQyZEODH1w",
           authDomain: "bot-admin-cb40b.firebaseapp.com",
@@ -147,104 +699,107 @@
           appId: "1:831475375013:web:3cb5c3d291e4b7bdaaa64c"
         };
 
-        // Firebase ইনিশিয়ালাইজ করুন
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
-        const initialPassOne = "1180"; // প্রথম পাসওয়ার্ড
-        const initialPassTwo = "8090"; // দ্বিতীয় পাসওয়ার্ড
+        const initialPassOne = "1180"; 
+        const initialPassTwo = "8090"; 
 
-        // সকল পেজগুলি লুকিয়ে নির্দিষ্ট পেজ দেখানো
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => {
                 page.style.display = 'none';
             });
-            document.getElementById(pageId).style.display = 'block';
+            document.getElementById(pageId).style.display = 'flex'; 
         }
-
-        function showHome() { showPage('home-page'); }
-        function showLogin() { showPage('login-form'); }
-        function showRegister() { showPage('register-form'); }
-        function showDashboard() { showPage('dashboard-page'); }
-        
-        // --- Firebase ফাংশনালিটি ---
         
         // অ্যাপ্লিকেশন স্ট্যাটাস এবং লিঙ্ক লোড করা
         database.ref('settings').on('value', (snapshot) => {
             const settings = snapshot.val();
+            const statusMessage = document.getElementById('app-status-message');
+            const socialContainerAuth = document.querySelector('#auth-page .social-links-container-auth');
+            const formSwitcher = document.querySelector('#auth-page .form-switcher');
+
             if (settings && settings.appStatus === 'off') {
-                document.getElementById('home-page').style.display = 'block'; // হোম পেজ দেখাতে হবে
-                document.getElementById('app-status-message').style.display = 'block';
-                document.querySelector('#home-page button:nth-child(3)').style.display = 'none'; // Login বাটন
-                document.querySelector('#home-page button:nth-child(4)').style.display = 'none'; // Register বাটন
-                // যদি ইউজার লগইন করা থাকে, তাকে লগআউট করে হোম পেজে পাঠানো উচিত
+                statusMessage.style.display = 'block';
+                socialContainerAuth.style.display = 'none'; 
+                formSwitcher.style.display = 'none';
+                document.getElementById('login-form-content').style.display = 'none';
+                document.getElementById('register-form-content').style.display = 'none';
+                
                 auth.signOut().then(() => {
-                    if (document.getElementById('dashboard-page').style.display === 'block') {
-                        showHome();
+                    if (document.getElementById('dashboard-page').style.display === 'flex') {
+                        showAuthPage();
                     }
-                }).catch(error => console.error(error));
+                }).catch(error => console.error("SignOut on App Off Error:", error));
             } else {
-                 document.getElementById('app-status-message').style.display = 'none';
-                 document.querySelector('#home-page button:nth-child(3)').style.display = 'inline-block';
-                 document.querySelector('#home-page button:nth-child(4)').style.display = 'inline-block';
+                 statusMessage.style.display = 'none';
+                 socialContainerAuth.style.display = 'flex'; 
+                 formSwitcher.style.display = 'flex';
+                 document.getElementById('login-tab').click(); 
             }
 
             // সোশ্যাল মিডিয়া লিঙ্ক আপডেট করা
             if (settings && settings.links) {
-                document.getElementById('tiktok-link').href = settings.links.tiktok;
-                document.getElementById('telegram-link').href = settings.links.telegram;
-                document.getElementById('discord-link').href = settings.links.discord;
+                document.getElementById('youtube-link').href = settings.links.tiktok || '#';
+                document.getElementById('telegram-link').href = settings.links.telegram || '#';
+                document.getElementById('discord-link').href = settings.links.discord || '#';
+                
+                document.getElementById('tiktok-link-dashboard').href = settings.links.tiktok || '#'; 
+                document.getElementById('telegram-link-dashboard').href = settings.links.telegram || '#';
+                document.getElementById('discord-link-dashboard').href = settings.links.discord || '#';
             }
         });
         
         // ইউজার রেজিস্ট্রেশন
-        function registerUser() {
+        function registerUser(e) {
+            e.preventDefault();
             const email = document.getElementById('register-email').value;
             const password = document.getElementById('register-password').value;
-            const errorElement = document.getElementById('register-error');
-            errorElement.textContent = '';
+            
+            if (password.length < 6) {
+                 showMessage('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।', 'error');
+                 return;
+            }
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then((userCredential) => {
-                    // সফল রেজিস্ট্রেশন
-                    errorElement.textContent = 'রেজিস্ট্রেশন সফল! লগইন করুন।';
-                    errorElement.style.color = '#2ecc71';
-                    showLogin();
-                    // Firebase Realtime Database-এ ইউজার যোগ করা
+                    showMessage('রেজিস্ট্রেশন সফল! লগইন করুন।', 'success');
                     database.ref('users/' + userCredential.user.uid).set({
                         email: email,
                         isBlocked: false,
                         registrationDate: new Date().toISOString()
                     });
+                    setTimeout(() => document.getElementById('login-tab').click(), 2000);
                 })
                 .catch((error) => {
-                    // এরর হ্যান্ডলিং
-                    errorElement.textContent = 'রেজিস্ট্রেশন ব্যর্থ: ' + error.message;
-                    errorElement.style.color = '#e74c3c';
-                });
-        }
-
-        // ইউজার লগইন
-        function loginUser() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const errorElement = document.getElementById('login-error');
-            errorElement.textContent = '';
-
-            auth.signInWithEmailAndPassword(email, password)
-                .then((userCredential) => {
-                    // সফল লগইন - অনAuthStateChanged হ্যান্ডলার বাকিটা দেখবে
-                })
-                .catch((error) => {
-                    errorElement.textContent = 'লগইন ব্যর্থ: ' + error.message;
-                    errorElement.style.color = '#e74c3c';
+                    showMessage('রেজিস্ট্রেশন ব্যর্থ: ' + error.message, 'error');
                 });
         }
         
-        // ইউজার লগআউট
+        document.getElementById('register-form-content').addEventListener('submit', registerUser);
+
+        // ইউজার লগইন 
+        function loginUser(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                     showMessage('লগইন সফল! প্রবেশ করা হচ্ছে...', 'success');
+                })
+                .catch((error) => {
+                    showMessage('লগইন ব্যর্থ: ' + error.message, 'error');
+                });
+        }
+        
+        document.getElementById('login-form-content').addEventListener('submit', loginUser);
+        
+        // ইউজার লগআউট 
         function logoutUser() {
             auth.signOut().then(() => {
-                showHome();
+                showAuthPage();
+                showMessage('সফলভাবে লগআউট করা হয়েছে।', 'success');
             }).catch((error) => {
                 console.error("Logout Error:", error);
             });
@@ -253,55 +808,806 @@
         // Auth স্ট্যাটাস পরিবর্তন পর্যবেক্ষণ করা
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // ইউজার লগইন করা আছে, ব্লক স্ট্যাটাস চেক করুন
                 database.ref('users/' + user.uid).once('value', (snapshot) => {
                     const userData = snapshot.val();
                     if (userData && userData.isBlocked) {
-                        // ইউজার ব্লক করা আছে
-                        auth.signOut(); // তাকে লগআউট করে দিন
+                        auth.signOut(); 
                         alert("দুঃখিত! আপনার অ্যাকাউন্টটি ব্লক করা হয়েছে।");
-                        showHome();
+                        showAuthPage();
                     } else {
-                        // ইউজার ব্লক করা নেই, ড্যাশবোর্ড দেখান
-                        showDashboard();
+                        showDashboardPage();
                     }
                 });
             } else {
-                // ইউজার লগইন করা নেই, হোম পেজ দেখান
                 if (document.getElementById('dashboard-page').style.display !== 'none') {
-                     showHome();
+                     showAuthPage();
                 }
             }
         });
         
         // গোপন লিঙ্ক অ্যাক্সেস
         function accessEmoteLink() {
+            window.setLoadingAccess(true);
             const passOne = document.getElementById('password-one').value;
             const passTwo = document.getElementById('password-two').value;
-            const errorElement = document.getElementById('access-error');
-            errorElement.textContent = '';
             
-            // Firebase থেকে গোপন লিঙ্ক এবং পাসওয়ার্ড লোড করুন
             database.ref('settings').once('value', (snapshot) => {
                 const settings = snapshot.val();
                 let emoteLink = settings && settings.emoteLink ? settings.emoteLink : "https://www.b25cheats.fun/";
                 let adminPassOne = settings && settings.passwords ? settings.passwords.passOne : initialPassOne;
                 let adminPassTwo = settings && settings.passwords ? settings.passwords.passTwo : initialPassTwo;
 
-                // পাসওয়ার্ড চেক
                 if (passOne === adminPassOne && passTwo === adminPassTwo) {
-                    // সফল: অটোমেটিক লিঙ্ক ওপেন হবে
-                    window.open(emoteLink, '_blank', 'noopener,noreferrer');
-                    errorElement.textContent = 'সফল! আপনার লিঙ্কটি নতুন ট্যাবে খুলছে...';
-                    errorElement.style.color = '#2ecc71';
+                    showMessage('সফল! আপনার লিঙ্কটি নতুন ট্যাবে খুলছে...', 'success', document.getElementById('access-message-box'));
+                    
+                    setTimeout(() => {
+                        window.open(emoteLink, '_blank', 'noopener,noreferrer');
+                        window.setLoadingAccess(false);
+                    }, 2000);
+                    
                 } else {
-                    // ব্যর্থ
-                    errorElement.textContent = 'ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।';
-                    errorElement.style.color = '#e74c3c';
+                    showMessage('ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।', 'error', document.getElementById('access-message-box'));
+                    window.setLoadingAccess(false);
                 }
             });
         }
         
     </script>
 </body>
-</html>
+</html><!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="theme-color" content="#1a1a1a">
+    <title>RS7 BOT - Free Fire Emote</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Dark Theme Variables */
+        :root {
+            --card-bg: rgba(34, 34, 34, 0.95);
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-color: #444;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --success-color: #2ecc71; 
+            --error-color: #e74c3c; 
+            --accent-color: #8b5cf6; 
+            --tiktok-primary: #000000;
+            --telegram-blue: #0088cc;
+        }
+
+        /* ************* বেসিক এবং কমন স্টাইল ************* */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #000000;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Roboto', sans-serif;
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+            color: var(--text-primary);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(79, 70, 229, 0.1) 0%, transparent 50%);
+            animation: gradientMove 20s ease infinite;
+            z-index: 0;
+        }
+        
+        /* কন্টেইনার স্টাইল */
+        .dashboard-container, .auth-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px) saturate(150%);
+            -webkit-backdrop-filter: blur(10px) saturate(150%);
+            /* clamp(Min, Preferred, Max) ফাংশনটি রেসপনসিভনেস নিশ্চিত করছে */
+            padding: clamp(32px, 8vw, 56px) clamp(24px, 6vw, 48px);
+            border-radius: clamp(20px, 4vw, 28px);
+            box-shadow: var(--shadow-lg), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            max-width: 520px; /* ডিফল্ট সর্বোচ্চ প্রস্থ */
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* গ্রেডিয়েন্ট বর্ডার পুনরুদ্ধার */
+        .dashboard-container::before, .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8b5cf6, #4f46e5, #ec4899, #8b5cf6);
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            border-radius: 28px 28px 0 0;
+        }
+        
+        /* ************* হেডার স্টাইল ************* */
+        .login-header {
+            text-align: center;
+            margin-bottom: clamp(24px, 6vw, 32px);
+        }
+        
+        .logo-wrapper {
+            margin-bottom: 16px;
+        }
+        
+        .logo-wrapper i {
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .login-header h1 {
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            margin: 0 0 8px 0;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899, #f43f5e, #8b5cf6);
+            background-size: 300% 300%;
+            animation: colorShift 5s ease infinite, titlePulse 2s ease-in-out infinite; 
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            display: inline-block; 
+            will-change: transform;
+        }
+        
+        .login-header p {
+            color: var(--accent-color); 
+            margin: 0;
+            font-size: clamp(1.0rem, 3vw, 1.2rem);
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        /* ড্যাশবোর্ড শিরোনামের জন্য নির্দিষ্ট স্টাইল */
+        #dashboard-page .login-header h1 #dashboard-title-animated {
+            background: linear-gradient(90deg, #2ecc71, #3498db, #f1c40f, #2ecc71, #3498db);
+            background-size: 600% 100%;
+            animation: colorShift 5s linear infinite;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            user-select: none;
+            display: inline-block;
+        }
+
+        /* ************* সোশ্যাল লিঙ্ক স্টাইল ************* */
+        
+        .social-links-container-auth {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 16px 0 clamp(24px, 6vw, 36px); 
+        }
+        
+        .social-links-container-dashboard {
+            /* ডিফল্ট: পিসি এবং মোবাইল */
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0 24px; 
+        }
+
+        .get-password-link {
+            padding: clamp(14px, 3vw, 18px) 18px; 
+            border-radius: 14px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+            touch-action: manipulation;
+            width: 100%; 
+        }
+
+        .get-password-link.tiktok { 
+            background: linear-gradient(135deg, var(--tiktok-primary), #222222);
+        }
+        .get-password-link.telegram {
+            background: linear-gradient(135deg, var(--telegram-blue), #006699);
+        }
+        .get-password-link.discord {
+            background: linear-gradient(135deg, #7289da, #5865f2);
+        }
+        
+        .get-password-link:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* ************* ফর্ম স্টাইল (কোনো পরিবর্তন নেই) ************* */
+        
+        .form-switcher {
+            display: flex;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            background: #2a2a2a;
+            padding: 4px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .switch-button {
+            flex-grow: 1;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .switch-button.active {
+            background: var(--card-bg);
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .auth-form .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px; 
+        }
+        .auth-form .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem; 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: -0.2px;
+        }
+        .auth-form .form-group label i {
+            color: var(--accent-color);
+            font-size: 1.1em;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-wrapper i.input-icon {
+            position: absolute;
+            left: 18px;
+            color: #999;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .form-group input {
+            padding: clamp(14px, 3vw, 18px) 18px clamp(14px, 3vw, 18px) 50px;
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            outline: none;
+            background: #2a2a2a; 
+            color: var(--text-primary);
+            width: 100%;
+            font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--accent-color);
+            background: #333;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+        }
+        
+        .form-group input:focus ~ .input-icon {
+            color: var(--accent-color);
+        }
+
+        .action-button, .login-button {
+            padding: clamp(16px, 3.5vw, 20px) 30px;
+            background: linear-gradient(135deg, var(--success-color), #229954);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 8px;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.4);
+            width: 100%;
+            touch-action: manipulation;
+            min-height: 52px;
+        }
+        
+        .action-button:hover, .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.5);
+        }
+        
+        .logout-button {
+             background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+             margin-top: 20px;
+             margin-bottom: 20px;
+        }
+        
+        /* ************* ড্যাশবোর্ড স্পেসিফিক স্টাইল (কোনো পরিবর্তন নেই) ************* */
+        .login-form { 
+            display: flex;
+            flex-direction: column;
+            gap: clamp(20px, 4vw, 28px);
+        }
+        
+        .password-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 4px;
+            width: 100%;
+            justify-content: center; 
+        }
+
+        .get-password-link.tiktok.small-btn {
+            background: linear-gradient(135deg, #000000, #222222);
+            width: 100%;
+            margin: 0;
+            border: 1px solid #444;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            padding: clamp(10px, 2.5vw, 12px) 20px;
+            font-size: clamp(0.85rem, 2vw, 0.9rem); 
+        }
+        
+        /* Error/Message styles */
+        .message-box {
+            background: linear-gradient(135deg, #442222, #3a1a1a);
+            color: var(--error-color);
+            padding: 14px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            display: none;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid #663333;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .message-box.show {
+            animation: fadeIn 0.4s ease-in-out; 
+            display: block;
+        }
+
+        /* Animations (কোনো পরিবর্তন নেই) */
+        @keyframes colorShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+        
+        @keyframes titlePulse {
+            0%, 100% { 
+                transform: scale(1) translateY(0); 
+            }
+            50% { 
+                transform: scale(1.01) translateY(-1px);
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* ************* রেসপনসিভ অ্যাডজাস্টমেন্ট ************* */
+        .page {
+            display: none;
+            width: 100%;
+        }
+        
+        /* মোবাইল অ্যাডজাস্টমেন্ট (আপনার পুরোনো কোড) */
+        @media (max-width: 480px) {
+            .dashboard-container, .auth-container {
+                 padding: 32px 24px;
+            }
+            .social-links-container-dashboard {
+                /* মোবাইলে 3 কলামের বদলে 1 কলামে দেখাবে */
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ✅ নতুন পরিবর্তন: ট্যাবলেট এবং ছোট ল্যাপটপের জন্য */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            .dashboard-container, .auth-container {
+                max-width: 600px; 
+                padding: 40px 50px; 
+                border-radius: 32px; 
+            }
+            .dashboard-container::before, .auth-container::before {
+                height: 5px; 
+                border-radius: 32px 32px 0 0;
+            }
+            .social-links-container-dashboard {
+                /* ট্যাবলেটে 3 কলামের বদলে 2 কলামে দেখাবে */
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+        
+        /* ✅ নতুন পরিবর্তন: পিসি এবং বড় স্ক্রিনের জন্য */
+        @media (min-width: 1025px) {
+            .dashboard-container, .auth-container {
+                /* নির্দিষ্ট আকারে ফোকাসড থাকবে */
+                max-width: 500px; 
+                padding: 40px 48px;
+                border-radius: 32px;
+            }
+            body {
+                /* বড় স্ক্রিনে কন্টেইনারের চারপাশে একটু বেশি প্যাডিং */
+                padding: 40px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="auth-page" class="page">
+        <div class="auth-container">
+            
+            <div class="login-header">
+                <div class="logo-wrapper">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1>RS7 BOT</h1>
+                <p id="sub-heading">R7 SAHED 2.0</p>
+                <p id="app-status-message" style="color: var(--error-color); font-weight: 700; display: none; margin-top: 15px;">দুঃখিত! অ্যাডমিন কর্তৃক অ্যাপটি বর্তমানে বন্ধ আছে।</p>
+            </div>
+            
+            <div class="social-links-container-auth">
+                <a id="youtube-link" href="#" target="_blank" class="get-password-link tiktok" rel="noopener noreferrer"> <i class="fab fa-tiktok"></i> TikTok
+                </a>
+                <a id="telegram-link" href="#" target="_blank" class="get-password-link telegram" rel="noopener noreferrer">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+                <a id="discord-link" href="#" target="_blank" class="get-password-link discord" rel="noopener noreferrer">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+            </div>
+            
+            <div class="form-switcher">
+                <button class="switch-button active" id="login-tab" data-target="login-form">Login</button>
+                <button class="switch-button" id="register-tab" data-target="register-form">Register</button>
+            </div>
+
+            <div id="message-box" class="message-box"></div>
+            
+            <form class="auth-form" id="login-form-content">
+                <div class="form-section" style="display: flex; flex-direction: column; gap: 28px;">
+                    <div class="form-group">
+                        <label for="login-email">
+                            <i class="fas fa-envelope"></i> ইমেইল
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="email" id="login-email" name="email" placeholder="Enter Your Email" required autocomplete="email">
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">
+                            <i class="fas fa-lock"></i> পাসওয়ার্ড
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="password" id="login-password" name="password" placeholder="Enter Password" required autocomplete="current-password">
+                            <i class="fas fa-key input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="action-button" id="login-button-auth">
+                        <i class="fas fa-sign-in-alt"></i> লগইন
+                    </button>
+                </div>
+            </form>
+
+            <form class="auth-form" id="register-form-content" style="display:none;">
+                <div class="form-section" style="display: flex; flex-direction: column; gap: 28px;">
+                    <div class="form-group">
+                        <label for="register-email">
+                            <i class="fas fa-envelope"></i> ইমেইল
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="email" id="register-email" name="email" placeholder="Enter Valid Email" required autocomplete="email">
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password">
+                            <i class="fas fa-key"></i> পাসওয়ার্ড দিন
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="password" id="register-password" name="password" placeholder="Enter New Password" required autocomplete="new-password">
+                            <i class="fas fa-lock input-icon"></i>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="action-button" id="register-button">
+                        <i class="fas fa-user-plus"></i> রেজিস্টার করুন
+                    </button>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+    
+
+    <div id="dashboard-page" class="page">
+        <div class="dashboard-container">
+            
+            <div class="login-header">
+                <div class="logo-wrapper">
+                    <i class="fas fa-shield-alt" style="background: linear-gradient(135deg, #2ecc71 0%, #3498db 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                </div>
+                
+                <h1 style="font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; display: inline-block; font-size: clamp(1.75rem, 5vw, 2.5rem); margin: 0 0 8px 0;">
+                    <span id="dashboard-title-animated">RS7 BOT</span>
+                </h1>
+                
+                <p style="color: var(--accent-color); font-weight: 600;">R7 SAHED 2.0</p>
+            </div>
+            
+            <div class="social-links-container-dashboard">
+                <a onclick="window.open(document.getElementById('tiktok-link-dashboard').href, '_blank')" class="get-password-link discord">
+                    <i class="fab fa-tiktok"></i> TikTok
+                </a>
+                <a onclick="window.open(document.getElementById('telegram-link-dashboard').href, '_blank')" class="get-password-link telegram">
+                    <i class="fab fa-telegram-plane"></i> Telegram
+                </a>
+                 <a onclick="window.open(document.getElementById('discord-link-dashboard').href, '_blank')" class="get-password-link discord">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+            </div>
+            
+            <button onclick="logoutUser()" class="login-button logout-button">
+                 <i class="fas fa-sign-out-alt"></i> লগআউট
+            </button>
+            
+            <h4 style="color: var(--success-color); margin: 30px 0 20px; text-align: center;">গোপন কোড দিয়ে লিঙ্ক অ্যাক্সেস করুন</h4>
+
+            <div id="access-message-box" class="message-box"></div>
+            
+            <form class="login-form" id="access-form">
+                <div class="form-group">
+                    <label for="password-one">
+                        <i class="fas fa-lock"></i> প্রথম পাসওয়ার্ড 
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password-one" name="password_one" placeholder="Enter password 1" required autocomplete="off" inputmode="text">
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password-two">
+                        <i class="fas fa-star"></i> দ্বিতীয় পাসওয়ার্ড
+                    </label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password-two" name="password_two" placeholder="Enter password 2" required autocomplete="off" inputmode="text">
+                        <i class="fas fa-key input-icon"></i>
+                    </div>
+                    <div class="password-links" style="justify-content: center;">
+                        <a onclick="window.open(document.getElementById('telegram-link-dashboard').href, '_blank')" class="get-password-link tiktok small-btn" rel="noopener noreferrer">
+                            <i class="fas fa-check-circle"></i> Get Password
+                        </a>
+                    </div>
+                </div>
+                
+                <button type="submit" class="login-button" id="access-button">
+                    <i class="fas fa-sign-in-alt"></i> অ্যাক্সেস করুন
+                </button>
+            </form>
+            
+        </div>
+    </div>
+
+    <a id="tiktok-link-dashboard" href="#" style="display: none;"></a>
+    <a id="telegram-link-dashboard" href="#" style="display: none;"></a>
+    <a id="discord-link-dashboard" href="#" style="display: none;"></a>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    
+    <script>
+        // --- ইউটিলিটি ফাংশন (কোনো পরিবর্তন নেই) ---
+        (function() {
+            'use strict';
+            
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const loginFormContent = document.getElementById('login-form-content');
+            const registerFormContent = document.getElementById('register-form-content');
+            const subHeading = document.getElementById('sub-heading');
+            const messageBoxAuth = document.getElementById('message-box');
+            
+            const messageBoxAccess = document.getElementById('access-message-box'); 
+            const accessButton = document.getElementById('access-button');
+
+            function showForm(formId) {
+                if (formId === 'login-form') {
+                    loginFormContent.style.display = 'flex';
+                    registerFormContent.style.display = 'none';
+                    loginTab.classList.add('active');
+                    registerTab.classList.remove('active');
+                    subHeading.textContent = 'R7 SAHED 2.0';
+                    registerFormContent.reset(); 
+                } else {
+                    loginFormContent.style.display = 'none';
+                    registerFormContent.style.display = 'flex';
+                    loginTab.classList.remove('active');
+                    registerTab.classList.add('active');
+                    subHeading.textContent = 'নতুন অ্যাকাউন্ট তৈরি করুন';
+                    loginFormContent.reset(); 
+                }
+                messageBoxAuth.style.display = 'none';
+            }
+
+            // Toggler functionality
+            loginTab.addEventListener('click', () => showForm('login-form'));
+            registerTab.addEventListener('click', () => showForm('register-form'));
+
+            // Initial view
+            showForm('login-form');
+
+            window.showMessage = function(message, type = 'error', targetBox = messageBoxAuth) {
+                targetBox.textContent = message;
+                targetBox.style.background = type === 'success' 
+                    ? 'linear-gradient(135deg, var(--success-color), #229954)' 
+                    : 'linear-gradient(135deg, #442222, #3a1a1a)';
+                targetBox.style.color = type === 'success' ? 'white' : 'var(--error-color)';
+                targetBox.style.border = type === 'success' ? '2px solid var(--success-color)' : '2px solid #663333';
+                targetBox.style.display = 'block';
+                targetBox.classList.add('show');
+                
+                // 5 সেকেন্ড পরে মেসেজ হাইড
+                setTimeout(() => {
+                    targetBox.style.display = 'none';
+                    targetBox.classList.remove('show');
+                }, 5000);
+            }
+            
+            window.showAuthPage = function() { showPage('auth-page'); showForm('login-form'); }
+            window.showDashboardPage = function() { showPage('dashboard-page'); }
+            
+            window.setLoadingAccess = function(isLoading) {
+                if (isLoading) {
+                    accessButton.disabled = true;
+                    accessButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> চেকিং...';
+                } else {
+                    accessButton.disabled = false;
+                    accessButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> অ্যাক্সেস করুন';
+                }
+            }
+            
+            document.getElementById('access-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                accessEmoteLink();
+            });
+
+        })();
+        
+        // --- Firebase কনফিগারেশন এবং লজিক (কোনো পরিবর্তন নেই) ---
+        const firebaseConfig = {
+          apiKey: "AIzaSyCT-Qxh0aOqUtIK0gRVDiIAJpQyZEODH1w",
+          authDomain: "bot-admin-cb40b.firebaseapp.com",
+          databaseURL: "https://bot-admin-cb40b-default-rtdb.firebaseio.com",
+          projectId: "bot-admin-cb40b",
+          storageBucket: "bot-admin-cb40b.firebasestorage.app",
+          messagingSenderId: "831475375013",
+          appId: "1:831475375013:web:3cb5c3d291e4b7bdaaa64c"
+        };
+
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+        const initialPassOne = "1180"; 
+        const initialPassTwo = "8090"; 
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'flex'; 
+        }
+        
+        // অ্যাপ্লিকেশন স্ট্যাটাস এবং লিঙ্ক লোড করা
+        database.ref('settings').on('value', (snapshot) => {
+            const settings = snapshot.val();
+            const statusMessage = document.getElementById('app-status-message');
+            const socialContainerAuth = document.querySelector('#auth-page .social-links-container-auth');
+            const formSwitcher = document.querySelector('#auth-page .form-switcher');
+
+            if (settings && settings.appStatus === 'off') {
+                statusMessage.style.display = 'block';
+                socialContainerAuth.style.display = 'none'; 
+                formSwitcher.style.display = 'none';
+                document.getElementById('login-form-content').style.display = 'none';
+                document.getElementById('register-form-content').style.display = 'none';
+                
+                auth.signOut().then(() => {
+                    if (document.getElementById('dashboard-page').style.display === 'flex') {
+                        showAuthPage();
+                    }
+                }).catch(error => console.error("SignOut on App Off Error:", error));
+            } else {
+                 statusMessage.style.display = 'none';
+                 socialContainerAuth.style.display = 'flex'; 
+                 formSwitcher.style.display = 'flex';
+                 document.getElementById('login-tab').click(); 
+            }
+
+            // সোশ্যাল মিডিয়া লিঙ্ক আপডেট করা
+            if (settings && settings.links) {
+                document.getElementById('youtube-link').href = settings.links.tiktok || '#';
+                document.getElementById('telegram-link').href = settings.links.telegram || '#';
+                document.getElementById('discord-link').href = settings.links.discord || '#';
+                
+                document.getElementById('tiktok-link-dashboard').href = settings.links.tiktok || '#'; 
+                document.getElementById('telegram-link-dashboard').href = settings.links.telegram || '#';
+                document.getElementById('discord-link-dashboard').href = settings.links.discord || '#';
+            }
+        });
+        
+        // ইউজার রেজিস্ট্রেশন
+        function registerUser(e) {
+            e.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const pas
